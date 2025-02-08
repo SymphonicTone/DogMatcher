@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 export default function LoginForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("Bugs");
+  const [email, setEmail] = useState("Bunny@gmail.com");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,7 +20,6 @@ export default function LoginForm() {
     );
 
     if (response.ok) {
-      console.log("login success");
       window.location.href = "/search";
     } else {
       console.error("login failed");
@@ -29,6 +28,9 @@ export default function LoginForm() {
 
   return (
     <div className="border-2 p-12 rounded-lg">
+      {/* <button onClick={() => (window.location.href = "/search")}>
+        GO TO SEARCH
+      </button> */}
       <h1 className="text-3xl text-center mb-4">
         Theres a Pup waiting for you
       </h1>
