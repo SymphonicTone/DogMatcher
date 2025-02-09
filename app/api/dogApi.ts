@@ -9,11 +9,19 @@ export const getDogBreeds = async () => {
   return response.json();
 };
 
-export const fetchDogIds = async (sort: string = "breed:asc", from: number) => {
+export const fetchDogIds = async (
+  sort: string = "breed:asc",
+  from: number,
+  breeds: string[]
+) => {
   try {
     const url = new URL(
       `https://frontend-take-home-service.fetch.com/dogs/search?from=${from.toString()}&sort=${sort}`
     );
+
+    if (breeds) {
+      breeds.forEach((breed) => url.searchParams.append("breeds", breed));
+    }
 
     const response = await fetch(url.toString(), {
       method: "GET",
