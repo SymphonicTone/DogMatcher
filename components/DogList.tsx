@@ -11,6 +11,7 @@ export default function DogList() {
   const [nextQuery, setNextQuery] = useState<number>(0);
   const [dogBreeds, setDogBreeds] = useState([]);
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
+  const [sort, setSort] = useState<"breed:asc" | "breed:desc">("breed:asc");
 
   useEffect(() => {
     const getBreeds = async () => {
@@ -27,10 +28,14 @@ export default function DogList() {
     getBreeds();
   }, []);
 
-  const loadDogs = async (query: number, breeds: string[]) => {
+  const loadDogs = async (
+    sort: "breed:asc" | "breed:desc",
+    query: number,
+    breeds: string[]
+  ) => {
     try {
       setLoading(true);
-      const resultIds = await fetchDogIds("breed:asc", query, breeds);
+      const resultIds = await fetchDogIds(sort, query, breeds);
 
       const dogsData = await fetchDogsByIds(resultIds);
 
@@ -43,14 +48,20 @@ export default function DogList() {
     }
   };
 
-  const filterDogs = async (query: number, breeds: string[]) => {
+  const filterDogs = async (
+    sort: "breed:asc" | "breed:desc",
+    query: number,
+    breeds: string[]
+  ) => {
     try {
       setLoading(true);
-      const resultIds = await fetchDogIds("breed:asc", query, breeds);
+
+      const resultIds = await fetchDogIds(sort, query, breeds);
 
       const dogsData = await fetchDogsByIds(resultIds);
 
       setDogs(dogsData);
+
       setNextQuery(0);
     } catch (error) {
       console.error("Failed to load dogs: " + error);
@@ -59,13 +70,17 @@ export default function DogList() {
     }
   };
 
-  const loadMoreDogs = () => {
-    loadDogs(nextQuery, selectedBreeds);
+  const paginateDogs = () => {
+    loadDogs(sort, nextQuery, selectedBreeds);
   };
 
   useEffect(() => {
-    loadDogs(nextQuery, selectedBreeds);
+    loadDogs(sort, nextQuery, selectedBreeds);
   }, []);
+
+  useEffect(() => {
+    filterDogs(sort, 0, selectedBreeds);
+  }, [sort]);
 
   const handleBreedChange = (e) => {
     const isChecked = e.target.checked;
@@ -80,22 +95,30 @@ export default function DogList() {
     }
 
     const newSelectedBreeds = Array.from(selectedBreedSet);
+
     setSelectedBreeds(newSelectedBreeds);
 
-    filterDogs(0, selectedBreeds);
+    filterDogs(sort, 0, newSelectedBreeds);
+  };
+
+  const switchSort = () => {
+    setSort((prev) => (prev === "breed:asc" ? "breed:desc" : "breed:asc"));
   };
 
   // if (loading) {
   //   return <div>Loading...</div>;
   // }
 
-  console.log("selectedBreeds", selectedBreeds);
+  console.log("dogs", dogs);
   return (
     <div>
       <div className="w-full mb-4">
         <label className="relative">
           <input type="checkbox" className="hidden peer" />
           {"Show the dropdown"}
+          <div>
+            <button onClick={switchSort}>Change Sort</button>
+          </div>
 
           <div className="absolute bg-black border border-gray-200 transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 peer-checked:pointer-events-auto">
             <ul>
@@ -136,7 +159,7 @@ export default function DogList() {
         {nextQuery && (
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={() => loadMoreDogs()}
+            onClick={() => paginateDogs()}
             disabled={nextQuery >= 10000} // remove this hardcode later
           >
             Load More

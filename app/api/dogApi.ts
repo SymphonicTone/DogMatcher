@@ -10,7 +10,7 @@ export const getDogBreeds = async () => {
 };
 
 export const fetchDogIds = async (
-  sort: string = "breed:asc",
+  sort: string,
   from: number,
   breeds: string[]
 ) => {
