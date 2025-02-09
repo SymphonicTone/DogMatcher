@@ -9,25 +9,30 @@ export const getDogBreeds = async () => {
   return response.json();
 };
 
-export const fetchDogIds = async (
-  size: number = 25,
-  sort: string = "breed:asc"
-) => {
+export const fetchDogIds = async (sort: string = "breed:asc", from: number) => {
   try {
-    const response = await fetch(
-      `https://frontend-take-home-service.fetch.com/dogs/search?size=${size}&sort=${sort}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
+    const url = new URL(
+      `https://frontend-take-home-service.fetch.com/dogs/search?from=${from.toString()}&sort=${sort}`
     );
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch dog IDs: ${response.statusText}`);
+    }
+
     const data = await response.json();
+
     return data.resultIds;
   } catch (error) {
-    console.error("Failed to fetch dog IDs: " + error);
+    console.error("Failed to fetch dog IDs:", error);
+    return { resultIds: [], next: null };
   }
 };
 

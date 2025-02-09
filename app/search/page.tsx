@@ -8,6 +8,7 @@ export default function Search() {
   const [dogBreeds, setDogBreeds] = useState([]);
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [nextQuery, setNextQuery] = useState<number>(0);
 
   useEffect(() => {
     const getBreeds = async () => {
@@ -24,30 +25,30 @@ export default function Search() {
     getBreeds();
   }, []);
 
+  const loadDogs = async (query: number) => {
+    try {
+      setLoading(true);
+      const resultIds = await fetchDogIds("breed:asc", query);
+
+      const dogsData = await fetchDogsByIds(resultIds);
+
+      setDogs((prevDogs) => [...prevDogs, ...dogsData]);
+      setNextQuery(nextQuery + 25);
+    } catch (error) {
+      console.error("Failed to load dogs: " + error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadDogs = async () => {
-      try {
-        setLoading(true);
-        const dogIds = await fetchDogIds(25, "breed:asc");
-        const dogsData = await fetchDogsByIds(dogIds);
-
-        setDogs(dogsData);
-      } catch (error) {
-        console.error("Failed to load dogs: " + error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadDogs();
+    loadDogs(nextQuery);
   }, []);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  console.log("dogBreeds", dogBreeds);
-  console.log("dogs", dogs);
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -65,6 +66,15 @@ export default function Search() {
             </div>
           ))}
         </div>
+        {nextQuery && (
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => loadDogs(nextQuery)}
+            disabled={nextQuery >= 10000} // remove this hardcode later
+          >
+            Load More
+          </button>
+        )}
       </main>
     </div>
   );
