@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchDogBreeds, fetchDogsByIds, fetchDogIds } from "@/app/api/dogApi";
+import {
+  fetchDogBreeds,
+  fetchDogsByIds,
+  fetchDogIds,
+  fetchDogMatch,
+} from "@/app/api/dogApi";
 import Dog from "@/app/types";
 import Image from "next/image";
 import BreedSelector from "./BreedSelector";
@@ -14,6 +19,7 @@ export default function DogList() {
   const [sort, setSort] = useState<"breed:asc" | "breed:desc">("breed:asc");
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [favoriteDogIds, setFavoriteDogIds] = useState<string[]>([]);
+  const [dogMatch, setDogMatch] = useState<Dog>();
 
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -64,6 +70,12 @@ export default function DogList() {
     }
   };
 
+  const findMatch = async () => {
+    const match = await fetchDogMatch(favoriteDogIds);
+    setDogMatch(match[0]);
+    console.log("match", match);
+  };
+
   useEffect(() => {
     loadDogs(sort, nextQuery, selectedBreeds);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,9 +93,40 @@ export default function DogList() {
             setSelectedBreeds={setSelectedBreeds}
             loadDogs={loadDogs}
           />
+          <button onClick={findMatch}>Find Match</button>
         </label>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {dogMatch && (
+          <div>
+            <div
+              key={dogMatch.id}
+              className={`rounded-lg p-4 shadow-lg transition duration-300 ${
+                favoriteDogIds.includes(dogMatch.id)
+                  ? "border-2 border-blue-500"
+                  : ""
+              }`}
+              onClick={() => favoriteDog(dogMatch.id)}
+            >
+              <Image
+                src={dogMatch.img}
+                alt={dogMatch.name}
+                width={500}
+                height={500}
+                className="w-full h-48 object-cover rounded-md"
+              />
+              <h3 className="mt-2 text-xl font-semibold text-center">
+                {dogMatch.name} -{" "}
+                {dogMatch.age === 0
+                  ? "Under 1 year old"
+                  : dogMatch.age + " years old"}
+              </h3>
+              <p className="text-gray-600 text-center">
+                {dogMatch.breed} - Zip Code {dogMatch.zip_code}
+              </p>
+            </div>
+          </div>
+        )}
         {dogs.map((dog: Dog) => (
           <div
             key={dog.id}
