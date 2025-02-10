@@ -1,72 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getDogBreeds, fetchDogsByIds, fetchDogIds } from "@/app/api/dogApi";
+import { fetchDogBreeds, fetchDogsByIds, fetchDogIds } from "@/app/api/dogApi";
 import Dog from "@/app/types";
 import Image from "next/image";
+import BreedSelector from "./BreedSelector";
 
 export default function DogList() {
   const [dogs, setDogs] = useState<Dog[]>([]);
-  const [loading, setLoading] = useState(true);
   const [nextQuery, setNextQuery] = useState<number>(0);
-  const [dogBreeds, setDogBreeds] = useState([]);
-  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
+  const [totalDogs, setTotalDogs] = useState<number>(0);
+  const [dogBreeds, setDogBreeds] = useState<string[]>([]);
   const [sort, setSort] = useState<"breed:asc" | "breed:desc">("breed:asc");
+  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
 
   useEffect(() => {
-    const getBreeds = async () => {
+    const fetchBreeds = async () => {
       try {
-        const data = await getDogBreeds();
+        const data = await fetchDogBreeds();
         setDogBreeds(data);
       } catch (error) {
         console.error("Error fetching dog breeds:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
-    getBreeds();
+    fetchBreeds();
   }, []);
 
   const loadDogs = async (
     sort: "breed:asc" | "breed:desc",
     query: number,
-    breeds: string[]
+    breeds: string[],
+    filter: boolean = false
   ) => {
     try {
-      setLoading(true);
-      const resultIds = await fetchDogIds(sort, query, breeds);
+      const { resultIds, totalDogs } = await fetchDogIds(sort, query, breeds);
+      setTotalDogs(totalDogs);
 
       const dogsData = await fetchDogsByIds(resultIds);
 
-      setDogs((prevDogs) => [...prevDogs, ...dogsData]);
-      setNextQuery((prev) => prev + 25);
+      if (filter) {
+        setDogs(dogsData);
+      } else {
+        setDogs((prevDogs) => [...prevDogs, ...dogsData]);
+      }
+
+      setNextQuery(query + 25);
     } catch (error) {
       console.error("Failed to load dogs: " + error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterDogs = async (
-    sort: "breed:asc" | "breed:desc",
-    query: number,
-    breeds: string[]
-  ) => {
-    try {
-      setLoading(true);
-
-      const resultIds = await fetchDogIds(sort, query, breeds);
-
-      const dogsData = await fetchDogsByIds(resultIds);
-
-      setDogs(dogsData);
-
-      setNextQuery(0);
-    } catch (error) {
-      console.error("Failed to load dogs: " + error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -76,75 +57,26 @@ export default function DogList() {
 
   useEffect(() => {
     loadDogs(sort, nextQuery, selectedBreeds);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    filterDogs(sort, 0, selectedBreeds);
-  }, [sort]);
-
-  const handleBreedChange = (e) => {
-    const isChecked = e.target.checked;
-    const option = e.target.value;
-
-    const selectedBreedSet = new Set(selectedBreeds);
-
-    if (isChecked) {
-      selectedBreedSet.add(option);
-    } else {
-      selectedBreedSet.delete(option);
-    }
-
-    const newSelectedBreeds = Array.from(selectedBreedSet);
-
-    setSelectedBreeds(newSelectedBreeds);
-
-    filterDogs(sort, 0, newSelectedBreeds);
-  };
-
-  const switchSort = () => {
-    setSort((prev) => (prev === "breed:asc" ? "breed:desc" : "breed:asc"));
-  };
-
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  console.log("dogs", dogs);
   return (
     <div>
       <div className="w-full mb-4">
         <label className="relative">
-          <input type="checkbox" className="hidden peer" />
-          {"Show the dropdown"}
-          <div>
-            <button onClick={switchSort}>Change Sort</button>
-          </div>
-
-          <div className="absolute bg-black border border-gray-200 transition-opacity opacity-0 pointer-events-none peer-checked:opacity-100 peer-checked:pointer-events-auto">
-            <ul>
-              {dogBreeds.map((breed, index) => {
-                return (
-                  <li key={index}>
-                    <label className="flex whitespace-nowrap cursor-pointer px-2 py-1 transition-colors hover:bg-blue-100 [&:has(input:checked)]:bg-blue-200">
-                      <input
-                        type="checkbox"
-                        name={"Breeds"}
-                        value={breed}
-                        className="cursor-pointer"
-                        onChange={handleBreedChange}
-                      />
-                      <span className="ml-1">{breed}</span>
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          <BreedSelector
+            breeds={dogBreeds}
+            sort={sort}
+            setSort={setSort}
+            selectedBreeds={selectedBreeds}
+            setSelectedBreeds={setSelectedBreeds}
+            loadDogs={loadDogs}
+          />
         </label>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {dogs.map((dog: Dog) => (
-          <div key={dog.id} className="border rounded-lg p-4 shadow-lg">
+          <div key={dog.id} className=" rounded-lg p-4 shadow-lg">
             <Image
               src={dog.img}
               alt={dog.name}
@@ -152,11 +84,16 @@ export default function DogList() {
               height={500}
               className="w-full h-48 object-cover rounded-md"
             />
-            <h3 className="mt-2 text-xl font-semibold">{dog.name}</h3>
-            <p className="text-gray-600">{dog.breed}</p>
+            <h3 className="mt-2 text-xl font-semibold text-center">
+              {dog.name} -{" "}
+              {dog.age === 0 ? "Under 1 year old" : dog.age + " years old"}
+            </h3>
+            <p className="text-gray-600 text-center">
+              {dog.breed} - Zip Code {dog.zip_code}
+            </p>
           </div>
         ))}
-        {nextQuery && (
+        {totalDogs > nextQuery && (
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
             onClick={() => paginateDogs()}

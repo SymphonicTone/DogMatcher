@@ -1,4 +1,4 @@
-export const getDogBreeds = async () => {
+export const fetchDogBreeds = async () => {
   const response = await fetch(
     "https://frontend-take-home-service.fetch.com/dogs/breeds",
     { credentials: "include" }
@@ -37,7 +37,7 @@ export const fetchDogIds = async (
 
     const data = await response.json();
 
-    return data.resultIds;
+    return { resultIds: data.resultIds, totalDogs: data.total };
   } catch (error) {
     console.error("Failed to fetch dog IDs:", error);
     return { resultIds: [], next: null };
