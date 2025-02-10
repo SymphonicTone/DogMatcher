@@ -91,17 +91,23 @@ export default function DogList() {
   return (
     <div>
       <div className="w-full mb-4">
-        <label className="relative">
-          <BreedSelector
-            breeds={dogBreeds}
-            sort={sort}
-            setSort={setSort}
-            selectedBreeds={selectedBreeds}
-            setSelectedBreeds={setSelectedBreeds}
-            loadDogs={loadDogs}
-          />
-          <button onClick={findMatch}>Find Match</button>
-        </label>
+        <button
+          onClick={findMatch}
+          className={`fixed bottom-5 right-5 bg-black border-gray-500 p-5 rounded-md  transition duration-300 ${
+            favoriteDogIds.length === 0 ? "bg-gray-500" : "hover:bg-blue-500"
+          }`}
+          disabled={favoriteDogIds.length === 0}
+        >
+          {favoriteDogIds.length === 0 ? "Pick some Dogs" : "Find Match"}
+        </button>
+        <BreedSelector
+          breeds={dogBreeds}
+          sort={sort}
+          setSort={setSort}
+          selectedBreeds={selectedBreeds}
+          setSelectedBreeds={setSelectedBreeds}
+          loadDogs={loadDogs}
+        />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {dogMatch && isOpen && (
@@ -135,16 +141,18 @@ export default function DogList() {
             </p>
           </div>
         ))}
-        {totalDogs > nextQuery && (
+      </div>
+      {totalDogs > nextQuery && (
+        <div className="w-full text-center mt-5">
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded"
             onClick={() => paginateDogs()}
-            disabled={nextQuery >= 10000} // remove this hardcode later
+            disabled={nextQuery >= totalDogs}
           >
             Load More
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -102,7 +102,7 @@ const BreedSelector = ({
       />
       <button
         onClick={switchSort}
-        className="border-2 px-2 rounded-xl border-gray-500 hover:border-blue-500"
+        className="border-[1px] p-[11px] rounded-md bg-black border-gray-500 hover:border-gray-400 min-h-[38px] w-48 "
       >
         Change Sort
       </button>
