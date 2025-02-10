@@ -13,6 +13,7 @@ export default function DogList() {
   const [dogBreeds, setDogBreeds] = useState<string[]>([]);
   const [sort, setSort] = useState<"breed:asc" | "breed:desc">("breed:asc");
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
+  const [favoriteDogIds, setFavoriteDogIds] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -55,6 +56,14 @@ export default function DogList() {
     loadDogs(sort, nextQuery, selectedBreeds);
   };
 
+  const favoriteDog = (dogId: string) => {
+    if (favoriteDogIds.includes(dogId)) {
+      setFavoriteDogIds(favoriteDogIds.filter((id) => id != dogId));
+    } else {
+      setFavoriteDogIds((prevIds) => [...prevIds, dogId]);
+    }
+  };
+
   useEffect(() => {
     loadDogs(sort, nextQuery, selectedBreeds);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +85,13 @@ export default function DogList() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {dogs.map((dog: Dog) => (
-          <div key={dog.id} className=" rounded-lg p-4 shadow-lg">
+          <div
+            key={dog.id}
+            className={`rounded-lg p-4 shadow-lg transition duration-300 ${
+              favoriteDogIds.includes(dog.id) ? "border-2 border-blue-500" : ""
+            }`}
+            onClick={() => favoriteDog(dog.id)}
+          >
             <Image
               src={dog.img}
               alt={dog.name}
