@@ -98,6 +98,7 @@ const BreedSelector = ({
         placeholder="Select dog breeds..."
         styles={customStyles}
         closeMenuOnSelect={false}
+        isSearchable
       />
       <button
         onClick={switchSort}
