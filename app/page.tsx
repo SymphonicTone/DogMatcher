@@ -9,10 +9,10 @@ export default function Home() {
       <Image
         src="/huskies.png"
         alt="background"
-        layout="fill"
-        objectFit="cover"
+        width={100}
+        height={100}
         quality={100}
-        className="z-0"
+        className="z-0 w-full h-full top-0 left-0 object-cover 2xl:object-fill absolute"
       />
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start z-10">
         <LoginForm />
