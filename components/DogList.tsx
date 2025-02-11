@@ -121,7 +121,7 @@ export default function DogList() {
           <div
             key={dog.id}
             className={`rounded-lg p-4 shadow-lg transition duration-300 ${
-              favoriteDogIds.includes(dog.id) ? "border-2 border-blue-500" : ""
+              favoriteDogIds.includes(dog.id) ? "border-2 border-pink-500" : ""
             }`}
             onClick={() => favoriteDog(dog.id)}
           >
@@ -132,7 +132,7 @@ export default function DogList() {
               height={500}
               className="w-full h-48 object-cover rounded-md"
             />
-            <h3 className="mt-2 text-xl font-semibold text-center">
+            <h3 className="mt-2 text-xl font-semibold text-center text-pink-500">
               {dog.name} -{" "}
               {dog.age === 0 ? "Under 1 year old" : dog.age + " years old"}
             </h3>
@@ -145,7 +145,7 @@ export default function DogList() {
       {totalDogs > nextQuery && (
         <div className="w-full text-center mt-5">
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-black border-2 border-gray-500 w-48 transition duration-300 hover:border-white text-white px-4 py-2 rounded"
             onClick={() => paginateDogs()}
             disabled={nextQuery >= totalDogs}
           >

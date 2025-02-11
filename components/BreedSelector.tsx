@@ -1,5 +1,14 @@
 import React, { Dispatch, SetStateAction } from "react";
-import Select, { MultiValue, StylesConfig } from "react-select";
+import { MultiValue, StylesConfig } from "react-select";
+import dynamic from "next/dynamic";
+
+const Select = dynamic(
+  () =>
+    import("react-select") as unknown as Promise<
+      typeof import("react-select").default<BreedOption, true>
+    >,
+  { ssr: false }
+);
 
 interface BreedOption {
   value: string;
@@ -70,6 +79,10 @@ const BreedSelector = ({
         backgroundColor: "gray",
       },
     }),
+    input: (provided) => ({
+      ...provided,
+      color: "white",
+    }),
     multiValue: (provided) => ({
       ...provided,
       backgroundColor: "gray",
@@ -89,12 +102,13 @@ const BreedSelector = ({
   };
 
   return (
-    <div className="w-full flex flex-row relative gap-4 items-center justify-center">
+    <div className="w-full flex flex-row relative gap-4 px-4">
       <Select
         isMulti
+        instanceId="breed-select"
         options={breedOptions}
         value={selectedBreedOptions}
-        onChange={handleChange}
+        onChange={() => handleChange(selectedBreedOptions)}
         placeholder="Select dog breeds..."
         styles={customStyles}
         closeMenuOnSelect={false}
@@ -104,7 +118,7 @@ const BreedSelector = ({
         onClick={switchSort}
         className="border-[1px] p-[11px] rounded-md bg-black border-gray-500 hover:border-gray-400 min-h-[38px] w-48 "
       >
-        Change Sort
+        Sort by Breed: {sort === "breed:asc" ? "A-Z" : "Z-A"}
       </button>
     </div>
   );

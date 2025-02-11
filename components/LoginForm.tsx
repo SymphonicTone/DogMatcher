@@ -1,10 +1,16 @@
 import { useState } from "react";
+import { Fira_Sans } from "next/font/google";
+
+const firaSans = Fira_Sans({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
 
 export default function LoginForm() {
-  const [name, setName] = useState("Bugs");
-  const [email, setEmail] = useState("Bunny@gmail.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const response = await fetch(
@@ -27,27 +33,26 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="border-2 p-12 rounded-lg">
-      {/* <button onClick={() => (window.location.href = "/search")}>
-        GO TO SEARCH
-      </button> */}
-      <h1 className="text-3xl text-center mb-4">
-        Theres a Pup waiting for you
-      </h1>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
+    <div
+      className={`border-[1px] border-white p-12 rounded-lg backdrop-blur-2xl w-96 ${firaSans.className}`}
+    >
+      <h1 className="text-5xl text-center mb-4">Sign In</h1>
+      <p className="text-center">There&apos;s a Pup waiting for you!</p>
+      <form onSubmit={handleLogin} className="grid grid-cols-1 gap-6">
         <div className="relative">
           <input
             type="text"
             id="name"
-            className="peer w-full px-2 pt-5 pb-2 border-b-2 border-gray-400 bg-transparent focus:outline-none focus:border-blue-500"
+            placeholder=""
+            className="peer w-full px-2 pt-5 pb-2 border-b-2 border-gray-400 bg-transparent focus:outline-none focus:border-black"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
           <label
             htmlFor="name"
-            className="absolute left-2 top-5 text-white text-base transition-all duration-200 ease-in-out 
-                   peer-placeholder-shown:top-10 peer-focus:top-0 peer-focus:text-sm peer-focus:text-blue-500"
+            className="absolute left-2 peer-placeholder-shown:text-white peer-placeholder-shown:text-base transition-all duration-200 ease-in-out 
+                   peer-placeholder-shown:top-5 peer-focus:top-0 peer-focus:text-sm text-sm peer-focus:text-black text-black"
           >
             Name
           </label>
@@ -56,15 +61,16 @@ export default function LoginForm() {
           <input
             type="email"
             id="email"
-            className="peer w-full px-2 pt-5 pb-2 border-b-2 border-gray-400 bg-transparent focus:outline-none focus:border-blue-500"
+            placeholder=""
+            className="peer w-full px-2 pt-5 pb-2 border-b-2 border-gray-400 bg-transparent focus:outline-none focus:border-black"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <label
             htmlFor="email"
-            className="absolute left-2 top-5 text-white text-base transition-all duration-200 ease-in-out 
-                   peer-placeholder-shown:top-10 peer-focus:top-0 peer-focus:text-sm peer-focus:text-blue-500"
+            className="absolute left-2 peer-placeholder-shown:text-white peer-placeholder-shown:text-base transition-all duration-200 ease-in-out 
+                   peer-placeholder-shown:top-5 peer-focus:top-0 peer-focus:text-sm text-sm peer-focus:text-black text-black"
           >
             Email
           </label>
