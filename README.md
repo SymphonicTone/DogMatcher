@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐶 DogMatcher
 
-## Getting Started
+DogMatcher is a Next.js application that helps users find their perfect dog match. Users can filter, sort, and favorite dogs based on breed, age, and name.
 
-First, run the development server:
+## 🚀 Features
+- Search and filter dogs
+- Authentication using `fetch-access-token`
+- Sorting by breed, age, and name
+- Responsive UI with TailwindCSS
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🛠 Prerequisites
+
+Before you start, make sure you have:
+
+- [Node.js](https://nodejs.org/) installed (recommended version: `>=18.x`)
+- A package manager like `npm` or `yarn`
+- Access to the `fetch.com` API for authentication
+
+---
+
+## 📥 Installation & Setup
+
+1️⃣ Clone the repository:
+
+```sh
+git clone https://github.com/SymphonicTone/DogMatcher.git
+cd DogMatcher
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2️⃣ Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+npm install
+or
+yarn install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+3️⃣ Start the development server:
 
-To learn more about Next.js, take a look at the following resources:
+npm run dev
+or
+yarn dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app will be available at http://localhost:3000.
