@@ -7,7 +7,7 @@ import {
   fetchDogIds,
   fetchDogMatch,
 } from "@/app/api/dogApi";
-import Dog from "@/app/types";
+import Dog, { SortOption } from "@/app/types";
 import Image from "next/image";
 import BreedSelector from "./BreedSelector";
 import MatchModal from "./MatchModal";
@@ -17,7 +17,7 @@ export default function DogList() {
   const [nextQuery, setNextQuery] = useState<number>(0);
   const [totalDogs, setTotalDogs] = useState<number>(0);
   const [dogBreeds, setDogBreeds] = useState<string[]>([]);
-  const [sort, setSort] = useState<"breed:asc" | "breed:desc">("breed:asc");
+  const [sort, setSort] = useState<SortOption>("breed:asc");
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [favoriteDogIds, setFavoriteDogIds] = useState<string[]>([]);
   const [dogMatch, setDogMatch] = useState<Dog>();
@@ -37,7 +37,7 @@ export default function DogList() {
   }, []);
 
   const loadDogs = async (
-    sort: "breed:asc" | "breed:desc",
+    sort: SortOption,
     query: number,
     breeds: string[],
     filter: boolean = false
@@ -98,7 +98,7 @@ export default function DogList() {
           }`}
           disabled={favoriteDogIds.length === 0}
         >
-          {favoriteDogIds.length === 0 ? "Pick some Dogs" : "Find Match"}
+          {favoriteDogIds.length === 0 ? "Pick some Dogs!" : "Find Match"}
         </button>
         <BreedSelector
           breeds={dogBreeds}

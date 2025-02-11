@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { MultiValue, StylesConfig } from "react-select";
 import dynamic from "next/dynamic";
+import { SortOption } from "@/app/types";
 
 const Select = dynamic(
   () =>
@@ -17,12 +18,12 @@ interface BreedOption {
 
 interface BreedSelectorProps {
   breeds: string[];
-  sort: "breed:asc" | "breed:desc";
-  setSort: Dispatch<SetStateAction<"breed:asc" | "breed:desc">>;
+  sort: SortOption;
+  setSort: Dispatch<SetStateAction<SortOption>>;
   selectedBreeds: string[];
   setSelectedBreeds: Dispatch<SetStateAction<string[]>>;
   loadDogs: (
-    sort: "breed:asc" | "breed:desc",
+    sort: SortOption,
     query: number,
     breeds: string[],
     filter?: boolean
@@ -53,10 +54,24 @@ const BreedSelector = ({
     loadDogs(sort, 0, currentOptions, true);
   };
 
-  const switchSort = () => {
-    const newSort = sort === "breed:asc" ? "breed:desc" : "breed:asc";
-    setSort(newSort);
-    loadDogs(newSort, 0, selectedBreeds, true);
+  const switchSort = (sortType: string) => {
+    switch (sortType) {
+      case "breed":
+        const breedSort = sort === "breed:asc" ? "breed:desc" : "breed:asc";
+        setSort(breedSort);
+        loadDogs(breedSort, 0, selectedBreeds, true);
+        break;
+      case "name":
+        const nameSort = sort === "name:asc" ? "name:desc" : "name:asc";
+        setSort(nameSort);
+        loadDogs(nameSort, 0, selectedBreeds, true);
+        break;
+      case "age":
+        const ageSort = sort === "age:asc" ? "age:desc" : "age:asc";
+        setSort(ageSort);
+        loadDogs(ageSort, 0, selectedBreeds, true);
+        break;
+    }
   };
 
   const customStyles: StylesConfig<BreedOption, true> = {
@@ -108,17 +123,36 @@ const BreedSelector = ({
         instanceId="breed-select"
         options={breedOptions}
         value={selectedBreedOptions}
-        onChange={() => handleChange(selectedBreedOptions)}
+        onChange={handleChange}
         placeholder="Select dog breeds..."
         styles={customStyles}
         closeMenuOnSelect={false}
         isSearchable
       />
       <button
-        onClick={switchSort}
+        onClick={() => switchSort("breed")}
         className="border-[1px] p-[11px] rounded-md bg-black border-gray-500 hover:border-gray-400 min-h-[38px] w-48 "
       >
-        Sort by Breed: {sort === "breed:asc" ? "A-Z" : "Z-A"}
+        Sort by Breed:{" "}
+        {sort.includes("breed")
+          ? sort === "breed:asc"
+            ? "A-Z"
+            : "Z-A"
+          : "A-Z"}
+      </button>
+      <button
+        onClick={() => switchSort("name")}
+        className="border-[1px] p-[11px] rounded-md bg-black border-gray-500 hover:border-gray-400 min-h-[38px] w-48 "
+      >
+        Sort by Name:{" "}
+        {sort.includes("name") ? (sort === "name:asc" ? "A-Z" : "Z-A") : "A-Z"}
+      </button>
+      <button
+        onClick={() => switchSort("age")}
+        className="border-[1px] p-[11px] rounded-md bg-black border-gray-500 hover:border-gray-400 min-h-[38px] w-48 "
+      >
+        Sort by Age:{" "}
+        {sort.includes("age") ? (sort === "age:asc" ? "0-14" : "14-0") : "0-14"}
       </button>
     </div>
   );

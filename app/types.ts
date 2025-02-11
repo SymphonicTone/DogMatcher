@@ -6,3 +6,11 @@ export default interface Dog {
   zip_code: string;
   breed: string;
 }
+
+export type SortOption =
+  | "breed:asc"
+  | "breed:desc"
+  | "age:asc"
+  | "age:desc"
+  | "name:asc"
+  | "name:desc";
