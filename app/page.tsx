@@ -9,9 +9,9 @@ export default function Home() {
       <Image
         src="/huskies.png"
         alt="background"
-        width={100}
-        height={100}
+        fill
         quality={100}
+        unoptimized
         className="z-0 w-full h-full top-0 left-0 object-cover 2xl:object-fill absolute"
       />
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start z-10">
